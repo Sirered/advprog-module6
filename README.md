@@ -6,6 +6,8 @@ First, it wraps the stream with a BufReader that can read the contents of the mu
 
 ## returning_html reflection
 
+![image](https://github.com/Sirered/advprog-module6/assets/126568984/844b85c6-75a7-492c-a440-7240a142c2b0)
+
 First, it uses the same method as before to read the request. Then after it gets and reads the request, the program creates an HTTP Response with the following features:
 
 * A status line that contains the HTTP version, status code and status message
