@@ -21,6 +21,9 @@ It creates this response by first storing each of these features separately into
 
 ## Validating request and selectively responding reflection
 
+![image](https://github.com/Sirered/advprog-module6/assets/126568984/15602516-ccf8-4f5b-81c9-41d3d42b43a6)
+
+
 To split between how to process a request and what response is given for such, we have to check the status line, specifically the URI. The URI is the second parameter of the status line of a request and is the content of the URL after the info regarding the destination of the request (so it's the part of the URL that may differ even if the requests go to the same website). We use this URI to differentiate the types of request that is being asked, thus to differentiate responses we just have to check the URI. In this example we only treat the URI '/' as a valid request, hence if the status line is 'GET / HTTP/1.1' then we give them the normal hello.html, with a success status code. If it is anything else, that means that it is an invalid URI, in which case we return an error not found status code and error page.
 
 The difference between how a valid and invalid error is processed is the filename of the html that will be served and the status code in the status line. Thus instead of having to have the same exact code for each different type of response, except for the inputted fine name and status line, we can just set the filename and status line according to the URI (and since other than those variables, the processing is the same) then process the filename and status line the same. This refactoring cuts down on unnecessary duplicate code. 
