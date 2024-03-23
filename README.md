@@ -48,3 +48,16 @@ The difference between how a valid and invalid error is processed is the filenam
 The reason why the response for the URI '/' was delayed was because of the fact that it has to wait for the response for '/sleep' to finish first. The way that the program serves requests is by waiting for an incoming stream, processes it then continues to the next incoming stream (if there are any remaining). This causes delays to other requests that shouldn't take long, because the program has to finish processing (or in the case of the /sleep end point, sleeping) before it can start working on the next request, regardless of how quick the next request should take to process
 
 
+## Multithreaded server using Threadpool
+
+
+First we create a message passing channel, to facilitate communication between the pool and each thread, to pass on jobs for them to do
+
+
+Then the ThreadPool creates a vector of workers. Each worker has an id and a clone of the receiver that we got when we established the message passing channel. On initialisation, each worker spawns a thread that will continue to loop, that does nothing until it receives a job from the receiver they got. A job is a box with an FnOnce() defined, which is actually the job that will be done. Once the worker gets a job, it will do that job until completion. When it is doing the job, the worker’s receiver will be locked, thus won’t be accepting more jobs until the current iteration is terminated (which happens when the current job is done). Thus, when we create a vector of Workers, we create a finite number of threads that each have a copy of a receiver to get jobs and will loop on itself until iot gets a job.
+
+
+The ThreadPool is then initialized with the vector of workers, and the sender that was made when we created the message passing channel. When Threadpool.execute is run, it requires the input to be a function, which is then put in a Box to create a job (that can be easily passed) and then that job is sent by one of the workers that isn’t currently working, using the sender that the ThreadPool is initialized with. 
+
+
+In the main code, we initialize a thread pool that contains 4 workers and whenever we receive a stream from our TCPListener, we will run ThreadPool.execute (which sends a job for a worker to do), with handle_connection(stream) as the input (which is how we handle HTTP requests and is what will be done by a worker)
