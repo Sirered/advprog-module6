@@ -42,3 +42,9 @@ To split between how to process a request and what response is given for such, w
 The difference between how a valid and invalid error is processed is the filename of the html that will be served and the status code in the status line. Thus instead of having to have the same exact code for each different type of response, except for the inputted fine name and status line, we can just set the filename and status line according to the URI (and since other than those variables, the processing is the same) then process the filename and status line the same. This refactoring cuts down on unnecessary duplicate code.
 
 
+## Simulation of slow request reflection
+
+
+The reason why the response for the URI '/' was delayed was because of the fact that it has to wait for the response for '/sleep' to finish first. The way that the program serves requests is by waiting for an incoming stream, processes it then continues to the next incoming stream (if there are any remaining). This causes delays to other requests that shouldn't take long, because the program has to finish processing (or in the case of the /sleep end point, sleeping) before it can start working on the next request, regardless of how quick the next request should take to process
+
+
